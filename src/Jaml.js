@@ -8,7 +8,7 @@
 Jaml = function() {
   return {
     templates: {},
-        
+
     /**
      * Registers a template by name
      * @param {String} name The name of the template
@@ -17,7 +17,7 @@ Jaml = function() {
     register: function(name, template) {
       this.templates[name] = template;
     },
-    
+
     /**
      * Renders the given template name with an optional data object
      * @param {String} name The name of the template to render

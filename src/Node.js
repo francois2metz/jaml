@@ -9,14 +9,14 @@ Jaml.Node = function(tagName) {
    * This node's current tag
    */
   this.tagName = tagName;
-  
+
   /**
    * @property attributes
    * @type Object
    * Sets of attributes on this node (e.g. 'cls', 'id', etc)
    */
   this.attributes = {};
-  
+
   /**
    * @property children
    * @type Array
@@ -34,12 +34,12 @@ Jaml.Node.prototype = {
     for (var key in attrs) {
       //convert cls to class
       var mappedKey = key == 'cls' ? 'class' : key;
-      
+
       this.attributes[mappedKey] = attrs[key];
     }
     return this;
   },
-  
+
   /**
    * Adds a child string to this node. This can be called as often as needed to add children to a node
    * @param {String} childText The text of the child node
@@ -48,7 +48,7 @@ Jaml.Node.prototype = {
     this.children.push(childText);
     return this;
   },
-  
+
   /**
    * Renders this node with its attributes and children
    * @param {Number} lpad Amount of whitespace to add to the left of the string (defaults to 0)
@@ -56,41 +56,41 @@ Jaml.Node.prototype = {
    */
   render: function(lpad) {
     lpad = lpad || 0;
-    
+
     var node      = [],
         attrs     = [],
         textnode  = (this instanceof Jaml.TextNode),
         multiline = this.multiLineTag();
-    
-    
+
+
     //add any left padding
     if (!textnode) node.push(this.getPadding(lpad));
-    
+
     //open the tag
     node.push("<" + this.tagName);
 
     for (var key in this.attributes) {
       attrs.push(key + "=\"" + this.attributes[key] + "\"");
-    }    
+    }
     attrs.sort()
     //add any tag attributes
     for (var i=0; i<attrs.length; i++) {
       node.push(" " + attrs[i]);
     }
-    
+
     if (this.isSelfClosing() && this.children.length==0) {
       node.push("/>\n");
     } else {
       node.push(">");
-      
+
       if (multiline) node.push("\n");
-      
+
       this.renderChildren(node, this.children, lpad);
-            
+
       if (multiline) node.push(this.getPadding(lpad));
       node.push("</", this.tagName, ">\n");
     }
-    
+
     return node.join("");
   },
 
@@ -102,7 +102,7 @@ Jaml.Node.prototype = {
    */
   renderChildren: function(node, children, lpad) {
     var childLpad = lpad + 2;
-    
+
     for (var i=0; i < children.length; i++) {
       var child = children[i];
       if (child instanceof Array) {
@@ -111,9 +111,9 @@ Jaml.Node.prototype = {
       } else {
         node.push(child.render(childLpad));
       }
-    }    
+    }
   },
-  
+
   /**
    * Returns true if this tag should be rendered with multiple newlines (e.g. if it contains child nodes)
    * @return {Boolean} True to render this tag as multi-line
@@ -121,12 +121,12 @@ Jaml.Node.prototype = {
   multiLineTag: function() {
     var childLength = this.children.length,
         multiLine   = childLength > 0;
-    
+
     if (childLength == 1 && this.children[0] instanceof Jaml.TextNode) multiLine = false;
-    
+
     return multiLine;
   },
-  
+
   /**
    * Returns a string with the given number of whitespace characters, suitable for padding
    * @param {Number} amount The number of whitespace characters to add
@@ -135,7 +135,7 @@ Jaml.Node.prototype = {
   getPadding: function(amount) {
     return new Array(amount + 1).join(" ");
   },
-  
+
   /**
    * Returns true if this tag should close itself (e.g. no </tag> element)
    * @return {Boolean} True if this tag should close itself
@@ -147,7 +147,7 @@ Jaml.Node.prototype = {
 
     return true;
   },
-  
+
   /**
    * @property selfClosingTags
    * @type Array

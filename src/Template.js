@@ -4,7 +4,7 @@
  * When a template is rendered its node structure is computed with any provided template
  * data, culminating in one or more root nodes.  The root node(s) are then joined together
  * and returned as a single output string.
- * 
+ *
  * The render process uses two dirty but necessary hacks.  First, the template function is
  * decompiled into a string (but is not modified), so that it can be eval'ed within the scope
  * of Jaml.Template.prototype. This allows the second hack, which is the use of the 'with' keyword.
@@ -17,7 +17,7 @@ Jaml.Template = function(tpl) {
    * The function this template was created from
    */
   this.tpl = tpl;
-  
+
   this.nodes = [];
 };
 
@@ -30,29 +30,29 @@ Jaml.Template.prototype = {
    */
   render: function(thisObj, data) {
     data = data || (thisObj = thisObj || {});
-    
+
     //the 'data' argument can come in two flavours - array or non-array. Normalise it
     //here so that it always looks like an array.
     if (data.constructor.toString().indexOf("Array") == -1) {
       data = [data];
     }
-    
+
     with(this) {
       for (var i=0; i < data.length; i++) {
         eval("(" + this.tpl.toString() + ").call(thisObj, data[i], i)");
       };
     }
-    
+
     var roots  = this.getRoots(),
         output = "";
-    
+
     for (var i=0; i < roots.length; i++) {
       output += roots[i].render();
     };
-    
+
     return output;
   },
-  
+
   /**
    * Returns all top-level (root) nodes in this template tree.
    * Templates are tree structures, but there is no guarantee that there is a
@@ -61,21 +61,21 @@ Jaml.Template.prototype = {
    */
   getRoots: function() {
     var roots = [];
-    
+
     for (var i=0; i < this.nodes.length; i++) {
       var node = this.nodes[i];
-      
+
       if (node.parent == undefined) roots.push(node);
     };
-    
+
     return roots;
   },
-  
+
   tags: [
     "html", "head", "body", "script", "meta", "title", "link",
     "div", "p", "span", "a", "img", "br", "hr", "em", "strong",
     "table", "tr", "th", "td", "thead", "tbody", "tfoot",
-    "ul", "ol", "li", 
+    "ul", "ol", "li",
     "dl", "dt", "dd",
     "h1", "h2", "h3", "h4", "h5", "h6", "h7",
     "form", "fieldset", "input", "textarea", "label", "select", "option"
